@@ -1,0 +1,319 @@
+<div class="telonic-probe-calc">
+  <style>
+    .telonic-probe-calc {
+      max-width: 44rem;
+      margin: 1.5rem auto;
+      padding: clamp(1rem, 4%, 1.75rem);
+      border: 1px solid #c8d5df;
+      border-radius: 6px;
+      background: #fff;
+      color: #233445;
+      line-height: 1.45;
+    }
+
+    .telonic-probe-calc *,
+    .telonic-probe-calc {
+      box-sizing: border-box;
+    }
+
+    .telonic-probe-calc h2 {
+      margin: 0;
+      color: #12345a;
+      font-size: 1.5rem;
+    }
+
+    .telonic-probe-calc p {
+      margin: 0.4rem 0 0;
+    }
+
+    .telonic-probe-calc .tpc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+      gap: 0.875rem 1rem;
+      margin-top: 1rem;
+    }
+
+    .telonic-probe-calc label {
+      display: block;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .telonic-probe-calc input,
+    .telonic-probe-calc select {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      margin: 0.25rem 0 0;
+      padding: 0.45rem 0.65rem;
+      border: 1px solid #8497a8;
+      border-radius: 4px;
+      background: #fff;
+      color: #233445;
+      font: inherit;
+      font-weight: 400;
+    }
+
+    .telonic-probe-calc :is(input, select):focus-visible {
+      outline: 2px solid #086eaa;
+      outline-offset: 2px;
+    }
+
+    .telonic-probe-calc input[aria-invalid="true"] {
+      border-color: #a72a2a;
+    }
+
+    .telonic-probe-calc .tpc-frequency {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 0.5rem;
+    }
+
+    .telonic-probe-calc fieldset {
+      min-width: 0;
+      margin: 1.25rem 0 0;
+      padding: 0.75rem 0 0;
+      border: 0;
+      border-top: 1px solid #c8d5df;
+    }
+
+    .telonic-probe-calc legend {
+      width: auto;
+      margin: 0;
+      padding: 0 0.5rem 0 0;
+      border: 0;
+      color: #12345a;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .telonic-probe-calc .tpc-note {
+      color: #465b6d;
+      font-size: 0.875rem;
+    }
+
+    .telonic-probe-calc .tpc-result {
+      margin-top: 1.25rem;
+      padding: 0.875rem 1rem;
+      border-left: 3px solid #086eaa;
+      background: #f2f6fa;
+    }
+
+    .telonic-probe-calc .tpc-result p:first-child {
+      margin-top: 0;
+    }
+
+    .telonic-probe-calc .tpc-drop {
+      color: #12345a;
+      font-size: 1.25rem;
+    }
+
+    .telonic-probe-calc details {
+      margin-top: 0.875rem;
+    }
+
+    .telonic-probe-calc summary {
+      cursor: pointer;
+      color: #12345a;
+      font-weight: 600;
+    }
+
+    .telonic-probe-calc dl {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.25rem 0.75rem;
+      margin: 0.5rem 0 0;
+    }
+
+    .telonic-probe-calc dd {
+      margin: 0;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+
+  <h2>Oscilloscope probe loading calculator</h2>
+  <p>Estimate how much signal you lose at the test point when you connect a probe.</p>
+
+  <div class="tpc-grid">
+    <div class="tpc-frequency">
+      <label>
+        Signal frequency (0 for DC)
+        <input data-value="frequency" type="number" min="0" step="any" value="10" inputmode="decimal" required>
+      </label>
+      <select data-value="frequency-unit" aria-label="Frequency unit">
+        <option value="1">Hz</option>
+        <option value="1000">kHz</option>
+        <option value="1000000" selected>MHz</option>
+        <option value="1000000000">GHz</option>
+      </select>
+    </div>
+
+    <label>
+      Circuit source resistance (Ω)
+      <input data-value="source" type="number" min="0" step="any" value="50" inputmode="decimal" required>
+    </label>
+  </div>
+  <p class="tpc-note">Use the resistance seen looking back into the circuit from the test point, with the probe disconnected. The 50 Ω default is an example.</p>
+
+  <fieldset>
+    <legend>Probe input at the tip</legend>
+    <label>
+      Probe preset
+      <select data-value="preset">
+        <option value="10x">10× passive probe (example)</option>
+        <option value="1x">1× passive probe (example)</option>
+        <option value="custom">Custom</option>
+      </select>
+    </label>
+    <p class="tpc-note">For your own probe, use the input values specified for the probe and oscilloscope combination.</p>
+
+    <div class="tpc-grid">
+      <label>
+        Input capacitance (pF)
+        <input data-value="capacitance" type="number" min="0" step="any" value="10" inputmode="decimal" required>
+      </label>
+      <label>
+        Input resistance (MΩ)
+        <input data-value="resistance" type="number" min="0" step="any" value="10" inputmode="decimal" required>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="tpc-result" role="status" aria-atomic="true">
+    <p><strong class="tpc-drop" data-result="drop">—</strong> signal amplitude reduction</p>
+    <p data-result="detail"></p>
+  </div>
+  <details>
+    <summary>Calculation details</summary>
+    <dl>
+      <dt>Probe impedance magnitude</dt>
+      <dd data-result="impedance">—</dd>
+      <dt>Capacitive reactance magnitude</dt>
+      <dd data-result="reactance">—</dd>
+      <dt>Phase lag at the test point</dt>
+      <dd data-result="phase">—</dd>
+    </dl>
+    <p class="tpc-note">The estimate uses a resistive source and the probe’s input resistance and capacitance in parallel. It leaves out probe bandwidth, ground-lead inductance and any reactive source impedance.</p>
+  </details>
+  <noscript><p>Enable JavaScript to use the calculator.</p></noscript>
+
+  <script>
+    (() => {
+      const calculator = document.currentScript.closest(".telonic-probe-calc");
+      const fields = Object.fromEntries(
+        Array.from(calculator.querySelectorAll("[data-value]"), field => [field.dataset.value, field])
+      );
+      const outputs = Object.fromEntries(
+        Array.from(calculator.querySelectorAll("[data-result]"), output => [output.dataset.result, output])
+      );
+      const presets = {
+        "10x": { capacitance: 10, resistance: 10 },
+        "1x": { capacitance: 50, resistance: 1 }
+      };
+      const ohms = new Intl.NumberFormat("en-GB", { maximumSignificantDigits: 4 });
+      const percent = new Intl.NumberFormat("en-GB", {
+        style: "percent",
+        maximumFractionDigits: 4
+      });
+      const validation = [
+        ["frequency", "Enter a frequency of 0 or more.", 0],
+        ["source", "Enter a source resistance of 0 Ω or more.", 0],
+        ["capacitance", "Enter an input capacitance of 0 pF or more.", 0],
+        ["resistance", "Enter an input resistance greater than 0 MΩ.", Number.MIN_VALUE]
+      ];
+
+      function formatOhms(value) {
+        if (value === Infinity) return "∞ Ω";
+        if (value >= 1e12) return value.toExponential(3) + " Ω";
+        if (value >= 1e9) return ohms.format(value / 1e9) + " GΩ";
+        if (value >= 1e6) return ohms.format(value / 1e6) + " MΩ";
+        if (value >= 1e3) return ohms.format(value / 1e3) + " kΩ";
+        if (value >= 1 || value === 0) return ohms.format(value) + " Ω";
+        if (value >= 1e-3) return ohms.format(value * 1e3) + " mΩ";
+        return value.toExponential(3) + " Ω";
+      }
+
+      function formatPercent(ratio, complement) {
+        if (ratio > 0 && ratio < 1e-6) return "<0.0001%";
+        if (complement > 0 && complement < 1e-6) return ">99.9999%";
+        return percent.format(ratio);
+      }
+
+      function showError(message) {
+        for (const output of Object.values(outputs)) output.textContent = "—";
+        outputs.detail.textContent = message;
+      }
+
+      function calculate() {
+        let error = "";
+        for (const [name, message, minimum] of validation) {
+          const field = fields[name];
+          const value = field.valueAsNumber;
+          const invalid = !Number.isFinite(value) || value < minimum;
+          field.setAttribute("aria-invalid", String(invalid));
+          if (invalid && !error) error = message;
+        }
+        if (error) return showError(error);
+
+        const frequency = fields.frequency.valueAsNumber * Number(fields["frequency-unit"].value);
+        const source = fields.source.valueAsNumber;
+        const capacitancePf = fields.capacitance.valueAsNumber;
+        const resistance = fields.resistance.valueAsNumber * 1e6;
+
+        // The probe is a parallel RC load fed through the circuit's source resistance.
+        const susceptance = 2 * Math.PI * ((frequency * 1e-12) * capacitancePf);
+        const conductance = 1 / resistance;
+        const resistiveLoading = source / resistance;
+        const capacitiveLoading = source * susceptance;
+        const denominator = Math.hypot(1 + resistiveLoading, capacitiveLoading);
+        const impedance = 1 / Math.hypot(conductance, susceptance);
+        const reactance = 1 / susceptance;
+        const hasCapacitiveLoading = frequency > 0 && capacitancePf > 0;
+
+        if (![frequency, resistance, conductance, denominator, impedance].every(Number.isFinite) ||
+            (hasCapacitiveLoading && !Number.isFinite(reactance))) {
+          return showError("These values are outside the calculator’s numerical range.");
+        }
+
+        const remaining = 1 / denominator;
+        // Rationalise 1 - remaining near unity to keep small losses from rounding to zero.
+        const loss = denominator < 2
+          ? (resistiveLoading * (2 + resistiveLoading) + capacitiveLoading ** 2) /
+            (denominator * (denominator + 1))
+          : 1 - remaining;
+        const phaseLag = Math.atan2(capacitiveLoading, 1 + resistiveLoading) * 180 / Math.PI;
+
+        outputs.drop.textContent = formatPercent(loss, remaining);
+        outputs.detail.textContent = formatPercent(remaining, loss) + " of the unloaded signal remains at the test point.";
+        outputs.impedance.textContent = formatOhms(impedance);
+        outputs.reactance.textContent = formatOhms(reactance);
+        outputs.phase.textContent = ohms.format(phaseLag) + "°";
+      }
+
+      calculator.addEventListener("input", event => {
+        if (!event.target.matches("input[data-value]")) return;
+        if (event.target === fields.capacitance || event.target === fields.resistance) {
+          fields.preset.value = "custom";
+        }
+        calculate();
+      });
+
+      calculator.addEventListener("change", event => {
+        if (!event.target.matches("select[data-value]")) return;
+        if (event.target === fields.preset) {
+          const preset = presets[fields.preset.value];
+          if (preset) {
+            fields.capacitance.value = preset.capacitance;
+            fields.resistance.value = preset.resistance;
+          }
+        }
+        calculate();
+      });
+
+      calculate();
+    })();
+  </script>
+</div>
