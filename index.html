@@ -143,7 +143,14 @@
 .telonic-probe-calc label,
 .telonic-probe-calc legend,
 .telonic-probe-calc input,
+html, body {
+  margin: 0;
+  overflow: hidden;
+}
 
+.telonic-probe-calc {
+  margin-block: 0;
+}
   </style>
 
   <h2>Oscilloscope probe loading calculator</h2>
@@ -329,3 +336,24 @@
     })();
   </script>
 </div>
+<script>
+  (() => {
+    const calculator = document.querySelector(".telonic-probe-calc");
+    const blogOrigin = "https://telonic.co.uk";
+
+    function sendHeight() {
+      const height = Math.ceil(calculator.getBoundingClientRect().height);
+      window.parent.postMessage({ type: "probe-calculator-height", height }, blogOrigin);
+    }
+
+    new ResizeObserver(sendHeight).observe(calculator, { box: "border-box" });
+
+    window.addEventListener("message", event => {
+      if (event.origin === blogOrigin &&
+          event.source === window.parent &&
+          event.data === "probe-calculator-request-height") {
+        sendHeight();
+      }
+    });
+  })();
+</script>
