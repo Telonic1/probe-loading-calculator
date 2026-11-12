@@ -175,11 +175,13 @@ body {
     </div>
 
     <label>
-      Circuit source resistance (Ω)
+      Circuit source impedance (Ω)
       <input data-value="source" type="number" min="0" step="any" value="50" inputmode="decimal" required>
     </label>
   </div>
-  <p class="tpc-note">Use the resistance seen looking back into the circuit from the test point, with the probe disconnected. The 50 Ω default is an example.</p>
+  <p class="tpc-note">Enter the source resistance at the test point. This simplified model assumes the source impedance is purely resistive.
+  
+  This calculation assumes the circuit’s source impedance is purely resistive. Enter the equivalent source resistance at the test point with the probe disconnected.</p>
 
   <fieldset>
     <legend>Probe input at the tip</legend>
@@ -218,9 +220,8 @@ body {
       <dd data-result="reactance">—</dd>
       <dt>Phase lag at the test point</dt>
       <dd data-result="phase">—</dd>
-    </dl>
-    <p class="tpc-note">The estimate uses a resistive source and the probe’s input resistance and capacitance in parallel. It leaves out probe bandwidth, ground-lead inductance and any reactive source impedance.</p>
-  </details>
+    </dl></details>
+    <p class="tpc-note">This is a simplified loading estimate at the selected frequency. Actual measurement accuracy also depends on probe and oscilloscope bandwidth, compensation, ground connections and the circuit’s source impedance.</p>
   <noscript><p>Enable JavaScript to use the calculator.</p></noscript>
 
   <script>
